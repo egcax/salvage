@@ -1,0 +1,27 @@
+[package]
+name = "salvage-engine"
+version = "2.1.0"
+edition = "2021"
+description = "Salvage data recovery engine"
+
+[[bin]]
+name = "salvage-engine"
+path = "src/main.rs"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+libc = "0.2"
+sha2 = "0.10"
+crc32c = "0.6"
+xxhash-rust = { version = "0.8", features = ["xxh64"] }
+flate2 = "1"
+zstd = "0.13"
+image = { version = "0.25", default-features = false, features = ["jpeg", "png", "gif", "webp", "bmp", "tiff"] }
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 4
+strip = true
+panic = "unwind"

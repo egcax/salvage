@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+  <vendor>Salvage</vendor>
+  <vendor_url>https://github.com/egcax/salvage</vendor_url>
+  <action id="dev.salvage.Salvage.engine">
+    <description>Read a disk to recover deleted files</description>
+    <message>Salvage needs to read this disk. Nothing is written to it.</message>
+    <icon_name>dev.salvage.Salvage</icon_name>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/opt/salvage/salvage-engine</annotate>
+    <annotate key="org.freedesktop.policykit.exec.argv1">serve</annotate>
+  </action>
+  <action id="dev.salvage.Salvage.smart">
+    <description>Read disk health</description>
+    <message>Salvage reads the SMART health report of a disk.</message>
+    <icon_name>dev.salvage.Salvage</icon_name>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>yes</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/opt/salvage/salvage-engine</annotate>
+    <annotate key="org.freedesktop.policykit.exec.argv1">smart</annotate>
+  </action>
+  <action id="dev.salvage.Salvage.access">
+    <description>Allow Salvage without a password</description>
+    <message>Salvage wants to stop asking for a password on this computer.</message>
+    <icon_name>dev.salvage.Salvage</icon_name>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>auth_admin</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/opt/salvage/salvage-engine</annotate>
+    <annotate key="org.freedesktop.policykit.exec.argv1">allow-user</annotate>
+  </action>
+  <action id="dev.salvage.Salvage.access.off">
+    <description>Ask for a password again</description>
+    <message>Salvage will ask for a password again on this computer.</message>
+    <icon_name>dev.salvage.Salvage</icon_name>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>yes</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/opt/salvage/salvage-engine</annotate>
+    <annotate key="org.freedesktop.policykit.exec.argv1">deny-user</annotate>
+  </action>
+</policyconfig>

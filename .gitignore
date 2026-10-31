@@ -1,0 +1,10 @@
+engine/target/
+app/build/
+app/.dart_tool/
+packaging/pkg/
+packaging/src/
+packaging/*.pkg.tar.zst
+dist/
+tests/perf-*.json
+__pycache__/
+*.pyc

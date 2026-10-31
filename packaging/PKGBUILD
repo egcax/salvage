@@ -1,0 +1,26 @@
+# Local package: ../build.sh compiles the engine and the app first.
+pkgname=salvage
+pkgver=2.1.0
+pkgrel=1
+pkgdesc="Find and recover deleted files from any drive (FAT, exFAT, NTFS, ext, btrfs, F2FS, XFS) with a Material 3 interface"
+arch=('x86_64')
+license=('MIT')
+depends=('gtk3' 'polkit' 'util-linux')
+optdepends=('smartmontools: disk health'
+            'udisks2: unmount drives'
+            'ffmpegthumbnailer: video thumbnails'
+            'ffmpeg: HEIC and video previews'
+            'poppler: PDF thumbnails')
+options=('!strip' '!debug')
+
+package() {
+  local root="$startdir/.."
+  install -d "$pkgdir/opt/salvage"
+  cp -a "$root/app/build/linux/x64/release/bundle/." "$pkgdir/opt/salvage/"
+  install -Dm755 "$root/engine/target/release/salvage-engine" "$pkgdir/opt/salvage/salvage-engine"
+  install -Dm755 "$startdir/salvage.sh" "$pkgdir/usr/bin/salvage"
+  install -Dm644 "$startdir/dev.salvage.Salvage.policy" "$pkgdir/usr/share/polkit-1/actions/dev.salvage.Salvage.policy"
+  install -Dm644 "$startdir/dev.salvage.Salvage.desktop" "$pkgdir/usr/share/applications/dev.salvage.Salvage.desktop"
+  install -Dm644 "$root/LICENSE" "$pkgdir/usr/share/licenses/salvage/LICENSE"
+  install -Dm644 "$startdir/dev.salvage.Salvage.svg" "$pkgdir/usr/share/icons/hicolor/scalable/apps/dev.salvage.Salvage.svg"
+}

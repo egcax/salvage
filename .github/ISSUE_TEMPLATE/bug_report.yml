@@ -1,0 +1,38 @@
+name: Bug report
+description: Something does not work as it should
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        If you are trying to save important data, stop writing to that disk first.
+        Please remove personal file names and paths from logs before posting.
+  - type: input
+    id: version
+    attributes:
+      label: Salvage version
+      placeholder: "2.1.0"
+    validations:
+      required: true
+  - type: input
+    id: system
+    attributes:
+      label: Distribution and package type
+      placeholder: "Fedora 42, .rpm"
+    validations:
+      required: true
+  - type: input
+    id: filesystem
+    attributes:
+      label: Drive and file system
+      placeholder: "USB stick, exFAT"
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce

@@ -1,0 +1,16 @@
+name: Translation fix
+description: Report wrong or awkward text in a language
+labels: [translation]
+body:
+  - type: input
+    id: language
+    attributes:
+      label: Language
+    validations:
+      required: true
+  - type: textarea
+    id: text
+    attributes:
+      label: Current text and suggested text
+    validations:
+      required: true

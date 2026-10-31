@@ -1,0 +1,47 @@
+name: Install test
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag, which may still be a draft
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: ubuntu:22.04
+            install: apt-get update && apt-get install -y ./salvage_*.deb
+          - image: ubuntu:24.04
+            install: apt-get update && apt-get install -y ./salvage_*.deb
+          - image: debian:13
+            install: apt-get update && apt-get install -y ./salvage_*.deb
+          - image: fedora:latest
+            install: dnf install -y ./salvage-*.rpm
+          - image: opensuse/tumbleweed
+            install: zypper --non-interactive install --allow-unsigned-rpm ./salvage-*.rpm
+          - image: archlinux:latest
+            install: pacman -Syu --noconfirm && pacman -U --noconfirm ./salvage-*.pkg.tar.zst
+    steps:
+      - name: Download packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release download "${{ inputs.tag }}" -R "$GITHUB_REPOSITORY" -p 'salvage*'
+      - name: Install and start the engine
+        run: |
+          docker run --rm -v "$PWD:/w" -w /w "${{ matrix.image }}" sh -ec '
+            ${{ matrix.install }}
+            LD_LIBRARY_PATH=/opt/salvage/lib ldd /opt/salvage/salvage /opt/salvage/lib/*.so > ldd.txt 2>&1 || true
+            if grep "not found" ldd.txt; then exit 1; fi
+            test -x /usr/bin/salvage
+            test -f /usr/share/polkit-1/actions/dev.salvage.Salvage.policy
+            command -v pkexec || { echo "pkexec is missing"; exit 1; }
+            /opt/salvage/salvage-engine devices
+          '

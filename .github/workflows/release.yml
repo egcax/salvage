@@ -1,0 +1,39 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    # Old glibc, so the packages also run on newer distributions.
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.8'
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev rpm ruby ruby-dev libfuse2 libarchive-tools zstd librsvg2-bin
+          sudo gem install --no-document fpm
+      - name: Engine
+        run: cargo build --release --manifest-path engine/Cargo.toml
+      - name: App
+        working-directory: app
+        run: flutter build linux --release
+      - name: Packages
+        run: packaging/linux/make-packages.sh "${GITHUB_REF_NAME#v}"
+      - uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          draft: true
+          generate_release_notes: true
+          files: dist/*

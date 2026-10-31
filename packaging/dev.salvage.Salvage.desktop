@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Salvage
+GenericName=Data Recovery
+Comment=Recover deleted files from USB drives, cards and disks
+Exec=salvage
+Icon=dev.salvage.Salvage
+Terminal=false
+Categories=System;Filesystem;
+Keywords=undelete;recovery;recover;photorec;testdisk;usb;disk;
+StartupWMClass=dev.salvage.Salvage
+StartupNotify=true
