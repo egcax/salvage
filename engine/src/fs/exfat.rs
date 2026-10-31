@@ -1,6 +1,6 @@
 //! exFAT: deleted directory entry sets (0x05/0x40/0x41) and the allocation bitmap.
 
-use super::fat::days_from_civil;
+use super::fat::{days_from_civil, local_time};
 use crate::ctx::*;
 use crate::model::*;
 use crate::source::*;
@@ -44,7 +44,9 @@ impl Ex {
     }
 }
 
-fn ts(t: u32) -> i64 {
+/// A UTC offset sits next to the time: bit 7 means valid, the other 7 bits are a signed count of 15 minutes.
+/// Without an offset the time is local, as on FAT.
+fn ts(t: u32, tz: u8) -> i64 {
     if t == 0 {
         return 0;
     }
@@ -54,7 +56,12 @@ fn ts(t: u32) -> i64 {
     let h = ((t >> 11) & 31) as i64;
     let mi = ((t >> 5) & 63) as i64;
     let s = ((t & 31) * 2) as i64;
-    days_from_civil(y, m.max(1), d.max(1)) * 86400 + h * 3600 + mi * 60 + s
+    let (m, d) = (m.max(1), d.max(1));
+    if tz & 0x80 == 0 {
+        return local_time(y, m, d, h, mi, s);
+    }
+    let off = (((tz << 1) as i8) >> 1) as i64 * 900;
+    days_from_civil(y, m, d) * 86400 + h * 3600 + mi * 60 + s - off
 }
 
 struct Rec {
@@ -103,8 +110,8 @@ fn parse(buf: &[u8]) -> Vec<Rec> {
                             first: u32le(s, 20),
                             size: u64le(s, 24),
                             no_chain: s[1] & 2 != 0,
-                            mtime: ts(u32le(e, 12)),
-                            ctime: ts(u32le(e, 8)),
+                            mtime: ts(u32le(e, 12), e[23]),
+                            ctime: ts(u32le(e, 8), e[22]),
                         });
                     }
                     i += sec + 1;
@@ -326,4 +333,24 @@ fn add_file(x: &Ex, v: &Vol, ctx: &Ctx, vol: u16, dir: u32, r: &Rec, deleted: bo
         return;
     }
     ctx.add(e);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const NOON: u32 = (46 << 25) | (10 << 21) | (31 << 16) | (12 << 11);
+
+    #[test]
+    fn utc_offset_is_applied() {
+        let utc = 1793448000; // 2026-10-31 12:00:00 UTC
+        assert_eq!(ts(NOON, 0x80), utc);
+        assert_eq!(ts(NOON, 0x80 | 12), utc - 3 * 3600);
+        assert_eq!(ts(NOON, 0x80 | (128 - 20)), utc + 5 * 3600);
+    }
+
+    #[test]
+    fn empty_time_stays_empty() {
+        assert_eq!(ts(0, 0x80), 0);
+    }
 }

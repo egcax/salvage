@@ -2,7 +2,7 @@
 # Builds .deb, .rpm, pacman and AppImage packages from a release build.
 # Needs fpm and rsvg-convert.
 set -e
-VER="${1:-2.1.0}"
+VER="${1:-2.1.1}"
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 BUNDLE="$ROOT/app/build/linux/x64/release/bundle"
 STAGE="$ROOT/dist/stage"

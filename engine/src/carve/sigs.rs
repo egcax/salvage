@@ -236,7 +236,7 @@ fn exif_date(seg: &[u8]) -> i64 {
                 (n(0, 4), n(5, 7), n(8, 10), n(11, 13), n(14, 16), n(17, 19))
             {
                 if (1990..2100).contains(&y) && (1..=12).contains(&m) && (1..=31).contains(&d) {
-                    return crate::fs::fat::days_from_civil(y, m, d) * 86400 + h * 3600 + mi * 60 + s;
+                    return crate::fs::fat::local_time(y, m, d, h, mi, s);
                 }
             }
         }

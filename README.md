@@ -32,10 +32,10 @@
 
 | System | File | Install |
 |---|---|---|
-| Arch, CachyOS, Manjaro | [`salvage-2.1.0-1-x86_64.pkg.tar.zst`](https://github.com/egcax/salvage/releases/latest/download/salvage-2.1.0-1-x86_64.pkg.tar.zst) | `sudo pacman -U salvage-*.pkg.tar.zst` |
-| Debian, Ubuntu, Mint | [`salvage_2.1.0_amd64.deb`](https://github.com/egcax/salvage/releases/latest/download/salvage_2.1.0_amd64.deb) | `sudo apt install ./salvage_*.deb` |
-| Fedora, openSUSE | [`salvage-2.1.0-1.x86_64.rpm`](https://github.com/egcax/salvage/releases/latest/download/salvage-2.1.0-1.x86_64.rpm) | `sudo dnf install ./salvage-*.rpm` |
-| Any other distribution | [`Salvage-2.1.0-x86_64.AppImage`](https://github.com/egcax/salvage/releases/latest/download/Salvage-2.1.0-x86_64.AppImage) | `chmod +x Salvage-*.AppImage && ./Salvage-*.AppImage` |
+| Arch, CachyOS, Manjaro | [`salvage-2.1.1-1-x86_64.pkg.tar.zst`](https://github.com/egcax/salvage/releases/latest/download/salvage-2.1.1-1-x86_64.pkg.tar.zst) | `sudo pacman -U salvage-*.pkg.tar.zst` |
+| Debian, Ubuntu, Mint | [`salvage_2.1.1_amd64.deb`](https://github.com/egcax/salvage/releases/latest/download/salvage_2.1.1_amd64.deb) | `sudo apt install ./salvage_*.deb` |
+| Fedora, openSUSE | [`salvage-2.1.1-1.x86_64.rpm`](https://github.com/egcax/salvage/releases/latest/download/salvage-2.1.1-1.x86_64.rpm) | `sudo dnf install ./salvage-*.rpm` |
+| Any other distribution | [`Salvage-2.1.1-x86_64.AppImage`](https://github.com/egcax/salvage/releases/latest/download/Salvage-2.1.1-x86_64.AppImage) | `chmod +x Salvage-*.AppImage && ./Salvage-*.AppImage` |
 
 Packages are the better choice: they add SMART health data and the option to scan without
 a password. The AppImage needs GTK 3 from your system and asks for your password on every

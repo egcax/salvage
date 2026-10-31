@@ -1,6 +1,6 @@
 # Local package: ../build.sh compiles the engine and the app first.
 pkgname=salvage
-pkgver=2.1.0
+pkgver=2.1.1
 pkgrel=1
 pkgdesc="Find and recover deleted files from any drive (FAT, exFAT, NTFS, ext, btrfs, F2FS, XFS) with a Material 3 interface"
 arch=('x86_64')

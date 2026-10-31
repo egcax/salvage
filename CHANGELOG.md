@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.1
+
+- Fixed dates on FAT drives and in photo EXIF data, which were shifted by the time zone offset
+- exFAT dates now use the UTC offset stored on the disk
+
 ## 2.1.0
 
 - New home dashboard with drive cards, usage charts, protection status and recent scans

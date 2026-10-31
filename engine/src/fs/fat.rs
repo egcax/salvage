@@ -77,7 +77,21 @@ fn dos_time(date: u16, time: u16) -> i64 {
     let m = ((date >> 5) & 15) as i64;
     let d = (date & 31) as i64;
     let (h, mi, s) = ((time >> 11) as i64, ((time >> 5) & 63) as i64, ((time & 31) * 2) as i64);
-    days_from_civil(y, m.max(1), d.max(1)) * 86400 + h * 3600 + mi * 60 + s
+    local_time(y, m.max(1), d.max(1), h, mi, s)
+}
+
+/// FAT and EXIF time has no zone: it is the local time of the machine that wrote it.
+/// Read as UTC, it would shift by the zone offset in the interface. mktime handles DST.
+pub fn local_time(y: i64, m: i64, d: i64, h: i64, mi: i64, s: i64) -> i64 {
+    let mut tm: libc::tm = unsafe { std::mem::zeroed() };
+    tm.tm_year = (y - 1900) as i32;
+    tm.tm_mon = (m - 1) as i32;
+    tm.tm_mday = d as i32;
+    tm.tm_hour = h as i32;
+    tm.tm_min = mi as i32;
+    tm.tm_sec = s as i32;
+    tm.tm_isdst = -1;
+    unsafe { libc::mktime(&mut tm) }
 }
 
 pub fn days_from_civil(y: i64, m: i64, d: i64) -> i64 {
@@ -486,5 +500,24 @@ fn orphan_sweep(f: &Fat, v: &Vol, ctx: &Ctx, vol: u16, root: u32, seen: &mut Has
             }
         }
         start += n;
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn dos_time_is_local_time() {
+        let noon = 1793448000; // 2026-10-31 12:00:00 UTC
+        let date = (46 << 9) | (10 << 5) | 31;
+        let time = 12 << 11;
+        std::env::set_var("TZ", "XXX-3");
+        assert_eq!(dos_time(date, time), noon - 3 * 3600);
+        assert_eq!(dos_time(0, time), 0);
+        // DST: the same zone is an hour different in July.
+        std::env::set_var("TZ", "EST5EDT,M3.2.0,M11.1.0");
+        assert_eq!(local_time(2026, 1, 15, 12, 0, 0) - days_from_civil(2026, 1, 15) * 86400, 17 * 3600);
+        assert_eq!(local_time(2026, 7, 15, 12, 0, 0) - days_from_civil(2026, 7, 15) * 86400, 16 * 3600);
     }
 }
