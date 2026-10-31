@@ -8,7 +8,7 @@ import '../theme.dart';
 import '../widgets.dart';
 import 'tools.dart';
 
-const appVersion = '2.1.1';
+const appVersion = '2.1.2';
 
 class HistoryPage extends StatelessWidget {
   const HistoryPage({super.key});

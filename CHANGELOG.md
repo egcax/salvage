@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.2
+
+- Saved scans moved to a `sessions` folder; scans saved by older versions no longer appear
+
 ## 2.1.1
 
 - Fixed dates on FAT drives and in photo EXIF data, which were shifted by the time zone offset
